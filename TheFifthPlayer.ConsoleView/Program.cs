@@ -28,14 +28,14 @@ void train()
 
     var result = player.Train(character);
     
-    Console.WriteLine($"Você realizou um treinamento com '{character.Name}'.");
-    Console.WriteLine(result switch {
+    write($"Você realizou um treinamento com '{character.Name}'.");
+    write(result switch {
         <0.25f => "Foi um treino horrível!",
         <0.5f => "Você já teve dias de práticas que renderam mais...",
         <0.75f => "Foi um bom treino.",
         _     => "Foi um treino excelente!"
     });
-    Console.WriteLine(player.GetAbility(character) switch {
+    write(player.GetAbility(character) switch {
         <0.5f => "Você não se sente muito bem com ele ainda...",
         <0.7f => "Você finalmente está pegando o jeito...",
         <0.9f => "Você é confiante com o personagem.",
@@ -61,19 +61,16 @@ string[] table(IEnumerable<object[]> values)
 
 }
 
-int options(string question, string[] opts)
+int options(string question, string[] opts, bool animate = false)
 {
     int left, top;
     var curr = 0;
     var bigger = opts.Max(s => s.Length);
     bigger = int.Max(bigger + 3, 20);
     (left, top) = (Console.CursorLeft, Console.CursorTop);
+    write(question, true);
     while (true)
     {
-        (Console.CursorLeft, Console.CursorTop) = (left, top);
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine(question);
         for (int i = 0; i < opts.Length; i++)
         {
             var message = string.Empty;
@@ -90,7 +87,7 @@ int options(string question, string[] opts)
                 message += "   ";
             }
             message += opts[i] + string.Concat(Enumerable.Repeat(' ', bigger - opts[i].Length));
-            Console.WriteLine(message);
+            write(message, animate);
         }
 
         var key = Console.ReadKey(true);
@@ -100,6 +97,31 @@ int options(string question, string[] opts)
             curr = int.Clamp(curr + 1, 0, opts.Length - 1);
         if (key.Key == ConsoleKey.Enter)
             break;
+        animate = false;
+
+        (Console.CursorLeft, Console.CursorTop) = (left, top);
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.BackgroundColor = ConsoleColor.Black;
+        write(question, false);
     }
+
+    Console.ForegroundColor = ConsoleColor.White;
+    Console.BackgroundColor = ConsoleColor.Black;
+
     return curr;
+}
+
+void write(string message, bool animate = true)
+{
+    if (!animate)
+    {
+        Console.WriteLine(message);
+        return;
+    }
+    foreach (var c in message)
+    {
+        Thread.Sleep(1);
+        Console.Write(c);
+    }
+    Console.WriteLine();
 }
