@@ -9,7 +9,7 @@ public enum SkillType
     Peel = 16,
     AreaDamage = 32,
     RangeDamage = 64,
-    DisarmDamage = 128,
+    AreaDisarm = 128,
     Tank = 256,
     Mobility = 512,
     Sustain = 1024,
